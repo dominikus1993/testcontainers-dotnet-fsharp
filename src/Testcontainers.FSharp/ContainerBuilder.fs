@@ -10,6 +10,9 @@ module Container =
     type FsharpContainerBuilder internal () =
         member _.Yield(_) =
             ContainerBuilder()
+            
+        member _.Yield(wait: IWaitForContainerOS) =
+            ContainerBuilder().WithWaitStrategy(wait)
               
         member _.Run(state: ContainerBuilder) = state.Build()
 
@@ -21,6 +24,10 @@ module Container =
         member _.Env (state: ContainerBuilder, envs: IReadOnlyDictionary<String, String>) =
             state.WithEnvironment(envs)
 
+        [<CustomOperation("port")>]
+        member _.Port (state: ContainerBuilder, port: int, autoAssignPort: bool) =
+            state.WithPortBinding(port, autoAssignPort)
+            
         [<CustomOperation("image")>]
         member _.Metadata (state: ContainerBuilder, image: String) =
             state.WithImage(image)
